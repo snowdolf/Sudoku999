@@ -2867,7 +2867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sudoku
+  m_text: Main
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e6185b09426f5040a1a3720566f4e78, type: 2}
   m_sharedMaterial: {fileID: 6107513700040252673, guid: 5e6185b09426f5040a1a3720566f4e78, type: 2}
