@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
+    private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
     {
         if (panel != null)
         {
@@ -39,7 +39,7 @@ public class UIManager : MonoBehaviour
         OpenPanel(difficultyBackgroundPanel);
     }
 
-    public void ClosePanel(GameObject panel, Animator animator = null, string trigger = null)
+    private void ClosePanel(GameObject panel, Animator animator = null, string trigger = null)
     {
         if (panel != null)
         {
