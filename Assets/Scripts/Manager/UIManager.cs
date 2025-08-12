@@ -87,7 +87,7 @@ public class UIManager : MonoBehaviour
             if (button != null)
             {
                 int difficulty = i;
-                button.onClick.AddListener(() => GameManager.Instance.setDifficulty(difficulty));
+                button.onClick.AddListener(() => GameManager.Instance.SetDifficulty(difficulty));
             }
         }
         

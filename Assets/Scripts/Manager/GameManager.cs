@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 
     public int difficulty;
 
+    public int[,] cellIdx = new int[9, 9];
+
     private void Awake()
     {
         if (Instance == null)
@@ -20,6 +22,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+
+    }
+
     public void QuitGame()
     {
 #if UNITY_EDITOR
@@ -29,7 +36,7 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    public void setDifficulty(int difficulty)
+    public void SetDifficulty(int difficulty)
     {
         Instance.difficulty = difficulty;
         UIManager.Instance.CloseDifficultyPanel();
