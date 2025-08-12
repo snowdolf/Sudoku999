@@ -129,6 +129,12 @@ public class UIManager : MonoBehaviour
                     entry.callback.AddListener((data) => { Debug.Log(idx); });
                     trigger.triggers.Add(entry);
                 }
+
+                Cell cellComponent = cells[idx].GetComponent<Cell>();
+                if (cellComponent != null)
+                {
+                    cellComponent.SetIdx(idx);
+                }
             }
         }
     }
