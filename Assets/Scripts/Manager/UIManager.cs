@@ -126,7 +126,7 @@ public class UIManager : MonoBehaviour
                 {
                     EventTrigger.Entry entry = new EventTrigger.Entry();
                     entry.eventID = EventTriggerType.PointerClick;
-                    entry.callback.AddListener((data) => { Debug.Log(idx); });
+                    entry.callback.AddListener((data) => { ToggleCell(idx); });
                     trigger.triggers.Add(entry);
                 }
 
@@ -137,6 +137,8 @@ public class UIManager : MonoBehaviour
                 }
             }
         }
+
+        InitCellBackgroundColor();
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
@@ -173,5 +175,57 @@ public class UIManager : MonoBehaviour
     {
         ClosePanel(difficultyPanel);
         ClosePanel(difficultyBackgroundPanel);
+    }
+
+    public void ToggleCell(int idx)
+    {
+        Cell cell = cells[idx].GetComponent<Cell>();
+        if (cell != null)
+        {
+            if (!cell.isSelected)
+            {
+                InitCellBackgroundColor();
+                ChangeCellBackgroundColor(idx, new Color(.85f, .85f, .85f), new Color(.5f, 1f, 1f));
+                cell.isSelected = true;
+            }
+            else
+            {
+                InitCellBackgroundColor();
+            }
+        }
+    }
+
+    private void ChangeCellBackgroundColor(int idx, Color nearColor, Color selfColor)
+    {
+        GameManager.Instance.selectedCellIdx = idx;
+
+        Cell cell = cells[idx].GetComponent<Cell>();
+        if (cell != null)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                int targetIdx = GameManager.Instance.cellIdx[cell.row, i];
+                cells[targetIdx].GetComponent<Image>().color = nearColor;
+
+                targetIdx = GameManager.Instance.cellIdx[i, cell.col];
+                cells[targetIdx].GetComponent<Image>().color = nearColor;
+
+                targetIdx = GameManager.Instance.squareIdx[cell.square, i];
+                cells[targetIdx].GetComponent<Image>().color = nearColor;
+            }
+
+            cells[idx].GetComponent<Image>().color = selfColor;
+        }
+    }
+
+    private void InitCellBackgroundColor()
+    {
+        GameManager.Instance.selectedCellIdx = -1;
+
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].GetComponent<Cell>().isSelected = false;
+            cells[i].GetComponent<Image>().color = Color.white;
+        }
     }
 }

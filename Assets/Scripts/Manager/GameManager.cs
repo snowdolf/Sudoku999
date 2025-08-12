@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public int[,] cellIdx = new int[9, 9];
     public int[,] squareIdx = new int[9, 9];
 
+    public int selectedCellIdx = -1;
+
     private void Awake()
     {
         if (Instance == null)
