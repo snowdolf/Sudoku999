@@ -18,6 +18,13 @@ public class UIManager : MonoBehaviour
     private GameObject difficultyPanel;
     private Animator difficultyPanelAnimator;
 
+    private GameObject boardPrefab;
+    private GameObject squarePrefab;
+    private GameObject cellPrefab;
+
+    private GameObject board;
+    private GameObject[] cells = new GameObject[81];
+
     private void Awake()
     {
         if (Instance == null)
@@ -89,7 +96,41 @@ public class UIManager : MonoBehaviour
 
     private void ConnectMainSceneUI()
     {
-        // asdf
+        canvas = GameObject.Find("Canvas");
+
+        boardPrefab = Resources.Load<GameObject>("Main/Board");
+        squarePrefab = Resources.Load<GameObject>("Main/Square");
+        cellPrefab = Resources.Load<GameObject>("Main/Cell");
+
+        board = Instantiate(boardPrefab, canvas.transform);
+        for (int i = 0; i < 9; i++)
+        {
+            GameObject square = Instantiate(squarePrefab, board.transform);
+            square.name = "Square" + i;
+
+            for (int j = 0; j < 9; j++)
+            {
+                int idx = 9 * i + j;
+
+                cells[idx] = Instantiate(cellPrefab, square.transform);
+                cells[idx].name = "Cell" + idx;
+
+                TMP_Text cellText = cells[idx].GetComponentInChildren<TMP_Text>();
+                if (cellText != null)
+                {
+                    cellText.text = idx.ToString();
+                }
+
+                EventTrigger trigger = cells[idx].GetComponent<EventTrigger>();
+                if (trigger != null)
+                {
+                    EventTrigger.Entry entry = new EventTrigger.Entry();
+                    entry.eventID = EventTriggerType.PointerClick;
+                    entry.callback.AddListener((data) => { Debug.Log(idx); });
+                    trigger.triggers.Add(entry);
+                }
+            }
+        }
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
