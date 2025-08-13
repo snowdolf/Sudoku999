@@ -245,7 +245,7 @@ public class UIManager : MonoBehaviour
                 TMP_Text cellText = cells[i].GetComponentInChildren<TMP_Text>();
                 if (cellText != null)
                 {
-                    cellText.text = cell.val == 0 ? "" : cell.val.ToString();
+                    cellText.text = cell.state == CellState.Empty ? "" : cell.val.ToString();
                 }
             }
         }

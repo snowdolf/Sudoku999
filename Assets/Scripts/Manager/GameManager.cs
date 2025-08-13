@@ -72,6 +72,7 @@ public class GameManager : MonoBehaviour
     public void SetRandomSudoku()
     {
         SetRandomSolvedSudoku();
+        RemoveNumbers();
     }
 
     private void SetRandomSolvedSudoku()
@@ -141,5 +142,39 @@ public class GameManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void RemoveNumbers()
+    {
+        int numbersToRemove = 0;
+
+        switch (difficulty)
+        {
+            case 1:
+                numbersToRemove = 30;
+                break;
+            case 2:
+                numbersToRemove = 40;
+                break;
+            case 3:
+                numbersToRemove = 50;
+                break;
+            case 4:
+                numbersToRemove = 55;
+                break;
+            case 5:
+                numbersToRemove = 60;
+                break;
+        }
+
+        var randomNumbers = Enumerable.Range(0, 81).OrderBy(x => Random.value).ToList();
+
+        for (int i = 0; i < numbersToRemove; i++)
+        {
+            int row = randomNumbers[i] / 9;
+            int col = randomNumbers[i] % 9;
+
+            cellValue[row, col] = 0;
+        }
     }
 }
