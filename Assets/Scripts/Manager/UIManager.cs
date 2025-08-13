@@ -139,6 +139,9 @@ public class UIManager : MonoBehaviour
         }
 
         InitCellBackgroundColor();
+
+        GameManager.Instance.SetRandomSudoku();
+        InitCellValue();
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
@@ -226,6 +229,25 @@ public class UIManager : MonoBehaviour
         {
             cells[i].GetComponent<Cell>().isSelected = false;
             cells[i].GetComponent<Image>().color = Color.white;
+        }
+    }
+
+    private void InitCellValue()
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            Cell cell = cells[i].GetComponent<Cell>();
+            if (cell != null)
+            {
+                cell.val = GameManager.Instance.cellValue[cell.row, cell.col];
+                cell.state = cell.val == 0 ? CellState.Empty : CellState.Given;
+
+                TMP_Text cellText = cells[i].GetComponentInChildren<TMP_Text>();
+                if (cellText != null)
+                {
+                    cellText.text = cell.val == 0 ? "" : cell.val.ToString();
+                }
+            }
         }
     }
 }
