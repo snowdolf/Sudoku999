@@ -25,6 +25,11 @@ public class UIManager : MonoBehaviour
     private GameObject board;
     private GameObject[] cells = new GameObject[81];
 
+    private GameObject inputBoardPrefab;
+    private GameObject inputCellPrefab;
+
+    private GameObject inputBoard;
+
     private void Awake()
     {
         if (Instance == null)
@@ -142,6 +147,26 @@ public class UIManager : MonoBehaviour
 
         GameManager.Instance.SetRandomSudoku();
         InitCellValue();
+
+        inputBoardPrefab = Resources.Load<GameObject>("Main/InputBoard");
+        inputCellPrefab = Resources.Load<GameObject>("Main/InputCell");
+
+        Button button = GameObject.Find("InputButton").GetComponent<Button>();
+        inputBoard = Instantiate(inputBoardPrefab, button.transform);
+
+        for (int i = 1; i <= 9; i++)
+        {
+            GameObject inputCell = Instantiate(inputCellPrefab, inputBoard.transform);
+            inputCell.name = "InputCell" + i;
+
+            TMP_Text cellText = inputCell.GetComponentInChildren<TMP_Text>();
+            if (cellText != null)
+            {
+                cellText.text = i.ToString();
+            }
+        }
+
+        CloseInputPanel();
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
@@ -162,6 +187,11 @@ public class UIManager : MonoBehaviour
         OpenPanel(difficultyBackgroundPanel);
     }
 
+    public void OpenInputPanel()
+    {
+        OpenPanel(inputBoard);
+    }
+
     private void ClosePanel(GameObject panel, Animator animator = null, string trigger = null)
     {
         if (panel != null)
@@ -178,6 +208,11 @@ public class UIManager : MonoBehaviour
     {
         ClosePanel(difficultyPanel);
         ClosePanel(difficultyBackgroundPanel);
+    }
+
+    public void CloseInputPanel()
+    {
+        ClosePanel(inputBoard);
     }
 
     public void ToggleCell(int idx)
@@ -245,7 +280,26 @@ public class UIManager : MonoBehaviour
                 TMP_Text cellText = cells[i].GetComponentInChildren<TMP_Text>();
                 if (cellText != null)
                 {
-                    cellText.text = cell.state == CellState.Empty ? "" : cell.val.ToString();
+                    cellText.text = cell.state == CellState.Given ? cell.val.ToString() : "";
+                }
+            }
+        }
+    }
+
+    public void UpdateCellValue(int num)
+    {
+        if (GameManager.Instance.selectedCellIdx != -1)
+        {
+            Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
+            if (cell != null && cell.state != CellState.Given)
+            {
+                cell.val = num;
+                cell.state = CellState.Normal;
+                TMP_Text cellText = cells[GameManager.Instance.selectedCellIdx].GetComponentInChildren<TMP_Text>();
+                if (cellText != null)
+                {
+                    cellText.text = num.ToString();
+                    cellText.color = Color.blue;
                 }
             }
         }

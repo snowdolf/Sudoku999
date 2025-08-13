@@ -25,7 +25,6 @@ public class Cell : MonoBehaviour
 
     private void Start()
     {
-        state = CellState.Empty;
         isSelected = false;
         for (int i = 0; i < memo.Length; i++)
         {
