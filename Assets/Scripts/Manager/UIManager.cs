@@ -223,7 +223,7 @@ public class UIManager : MonoBehaviour
             if (!cell.isSelected)
             {
                 InitCellBackgroundColor();
-                ChangeCellBackgroundColor(idx, new Color(.85f, .85f, .85f), new Color(.5f, 1f, 1f));
+                ChangeCellBackgroundColor(idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
                 cell.isSelected = true;
             }
             else
@@ -233,25 +233,40 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void ChangeCellBackgroundColor(int idx, Color nearColor, Color selfColor)
+    private void ChangeCellBackgroundColor(int idx, Color nearColor, Color sameColor, Color selfColor, Color errorColor)
     {
         GameManager.Instance.selectedCellIdx = idx;
 
         Cell cell = cells[idx].GetComponent<Cell>();
         if (cell != null)
         {
+            if (cell.state != CellState.Empty)
+            {
+                for (int i = 0; i < cells.Length; i++)
+                {
+                    if (i != idx)
+                    {
+                        Cell otherCell = cells[i].GetComponent<Cell>();
+                        if (otherCell != null && otherCell.val == cell.val)
+                        {
+                            cells[i].GetComponent<Image>().color = sameColor;
+                        }
+                    }
+                }
+            }
+
             for (int i = 0; i < 9; i++)
             {
                 int targetIdx = GameManager.Instance.cellIdx[cell.row, i];
-                cells[targetIdx].GetComponent<Image>().color = nearColor;
+                cells[targetIdx].GetComponent<Image>().color = cells[targetIdx].GetComponent<Image>().color == sameColor ? errorColor : nearColor;
 
                 targetIdx = GameManager.Instance.cellIdx[i, cell.col];
-                cells[targetIdx].GetComponent<Image>().color = nearColor;
+                cells[targetIdx].GetComponent<Image>().color = cells[targetIdx].GetComponent<Image>().color == sameColor ? errorColor : nearColor;
 
                 targetIdx = GameManager.Instance.squareIdx[cell.square, i];
-                cells[targetIdx].GetComponent<Image>().color = nearColor;
+                cells[targetIdx].GetComponent<Image>().color = cells[targetIdx].GetComponent<Image>().color == sameColor ? errorColor : nearColor;
             }
-
+            
             cells[idx].GetComponent<Image>().color = selfColor;
         }
     }
@@ -295,12 +310,15 @@ public class UIManager : MonoBehaviour
             {
                 cell.val = num;
                 cell.state = CellState.Normal;
-                TMP_Text cellText = cells[GameManager.Instance.selectedCellIdx].GetComponentInChildren<TMP_Text>();
+                TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
                 if (cellText != null)
                 {
                     cellText.text = num.ToString();
                     cellText.color = Color.blue;
                 }
+                InitCellBackgroundColor();
+                ChangeCellBackgroundColor(cell.idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
+                cell.isSelected = true;
             }
         }
     }

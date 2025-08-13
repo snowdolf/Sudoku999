@@ -4,8 +4,7 @@ public enum CellState
 {
     Empty,
     Given,
-    Normal,
-    Error
+    Normal
 }
 
 public class Cell : MonoBehaviour
