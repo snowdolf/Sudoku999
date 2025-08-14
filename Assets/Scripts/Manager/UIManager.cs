@@ -305,10 +305,13 @@ public class UIManager : MonoBehaviour
     {
         if (GameManager.Instance.selectedCellIdx != -1)
         {
+            GameManager.Instance.SaveHistoryToStack();
+
             Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
             if (cell != null && cell.state != CellState.Given)
             {
                 cell.val = num;
+                GameManager.Instance.cellValue[cell.row, cell.col] = cell.val;
                 cell.state = CellState.Normal;
                 TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
                 if (cellText != null)
@@ -327,10 +330,13 @@ public class UIManager : MonoBehaviour
     {
         if (GameManager.Instance.selectedCellIdx != -1)
         {
+            GameManager.Instance.SaveHistoryToStack();
+
             Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
             if (cell != null && cell.state == CellState.Normal)
             {
                 cell.val = 0;
+                GameManager.Instance.cellValue[cell.row, cell.col] = cell.val;
                 cell.state = CellState.Empty;
                 TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
                 if (cellText != null)
@@ -342,5 +348,26 @@ public class UIManager : MonoBehaviour
                 cell.isSelected = true;
             }
         }
+    }
+
+    public void UpdateBoardUI()
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            Cell cell = cells[i].GetComponent<Cell>();
+            if (cell != null && cell.val != GameManager.Instance.cellValue[cell.row, cell.col])
+            {
+                cell.val = GameManager.Instance.cellValue[cell.row, cell.col];
+                cell.state = cell.val == 0 ? CellState.Empty : CellState.Normal;
+
+                TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
+                if (cellText != null)
+                {
+                    cellText.text = cell.val == 0 ? "" : cell.val.ToString();
+                }
+            }
+        }
+
+        InitCellBackgroundColor();
     }
 }

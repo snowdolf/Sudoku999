@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,8 @@ public class GameManager : MonoBehaviour
     public int selectedCellIdx = -1;
 
     public int[,] cellValue = new int[9, 9];
+
+    private Stack<int[,]> historyStack = new Stack<int[,]>();
 
     private void Awake()
     {
@@ -63,8 +66,6 @@ public class GameManager : MonoBehaviour
     {
         Instance.difficulty = difficulty;
         UIManager.Instance.CloseDifficultyPanel();
-
-        Debug.Log("Difficulty set to: " + Instance.difficulty);
 
         SceneManager.LoadScene("MainScene");
     }
@@ -175,6 +176,37 @@ public class GameManager : MonoBehaviour
             int col = randomNumbers[i] % 9;
 
             cellValue[row, col] = 0;
+        }
+    }
+
+    public void SaveHistoryToStack()
+    {
+        int[,] tmpHistory = new int[9, 9];
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                tmpHistory[i, j] = cellValue[i, j];
+            }
+        }
+
+        historyStack.Push(tmpHistory);
+    }
+
+    public void UndoHistory()
+    {
+        if (historyStack.Count > 0)
+        {
+            int[,] prevHistory = historyStack.Pop();
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    cellValue[i,j] = prevHistory[i, j];
+                }
+            }
+            UIManager.Instance.UpdateBoardUI();
         }
     }
 }
