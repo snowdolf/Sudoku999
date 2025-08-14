@@ -209,4 +209,14 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.UpdateBoardUI();
         }
     }
+
+    public void ResetHistory()
+    {
+        while (historyStack.Count > 1)
+        {
+            historyStack.Pop();
+        }
+
+        UndoHistory();
+    }
 }

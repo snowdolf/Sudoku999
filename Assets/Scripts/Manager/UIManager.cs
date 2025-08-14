@@ -30,6 +30,12 @@ public class UIManager : MonoBehaviour
 
     private GameObject inputBoard;
 
+    private GameObject optionBackgroundPanelPrefab;
+    private GameObject optionPanelPrefab;
+
+    private GameObject optionBackgroundPanel;
+    private GameObject optionPanel;
+
     private void Awake()
     {
         if (Instance == null)
@@ -167,6 +173,14 @@ public class UIManager : MonoBehaviour
         }
 
         CloseInputPanel();
+
+        optionBackgroundPanelPrefab = Resources.Load<GameObject>("Main/OptionBackgroundPanel");
+        optionPanelPrefab = Resources.Load<GameObject>("Main/OptionPanel");
+
+        optionBackgroundPanel = Instantiate(optionBackgroundPanelPrefab, canvas.transform);
+        optionPanel = Instantiate(optionPanelPrefab, canvas.transform);
+
+        CloseOptionPanel();
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
@@ -192,6 +206,12 @@ public class UIManager : MonoBehaviour
         OpenPanel(inputBoard);
     }
 
+    public void OpenOptionPanel()
+    {
+        OpenPanel(optionPanel);
+        OpenPanel(optionBackgroundPanel);
+    }    
+
     private void ClosePanel(GameObject panel, Animator animator = null, string trigger = null)
     {
         if (panel != null)
@@ -213,6 +233,12 @@ public class UIManager : MonoBehaviour
     public void CloseInputPanel()
     {
         ClosePanel(inputBoard);
+    }
+
+    public void CloseOptionPanel()
+    {
+        ClosePanel(optionPanel);
+        ClosePanel(optionBackgroundPanel);
     }
 
     public void ToggleCell(int idx)
