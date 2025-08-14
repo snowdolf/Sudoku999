@@ -1999,8 +1999,9 @@ GameObject:
   - component: {fileID: 1588786804}
   - component: {fileID: 1588786803}
   - component: {fileID: 1588786802}
+  - component: {fileID: 1588786805}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: DeleteButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2108,6 +2109,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1588786800}
   m_CullTransparentMesh: 1
+--- !u!114 &1588786805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588786800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba08ef269980a9d4691cd12900f9cd97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1605696346
 GameObject:
   m_ObjectHideFlags: 0

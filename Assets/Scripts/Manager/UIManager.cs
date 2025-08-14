@@ -322,4 +322,25 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    public void DeleteCellValue()
+    {
+        if (GameManager.Instance.selectedCellIdx != -1)
+        {
+            Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
+            if (cell != null && cell.state == CellState.Normal)
+            {
+                cell.val = 0;
+                cell.state = CellState.Empty;
+                TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
+                if (cellText != null)
+                {
+                    cellText.text = "";
+                }
+                InitCellBackgroundColor();
+                ChangeCellBackgroundColor(cell.idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
+                cell.isSelected = true;
+            }
+        }
+    }
 }
