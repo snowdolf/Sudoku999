@@ -17,6 +17,6 @@ public class DeleteButton : MonoBehaviour
 
     private void OnDeleteButtonClicked()
     {
-        UIManager.Instance.DeleteCellValue();
+        UIManager.Instance.UpdateCellValue(0);
     }
 }

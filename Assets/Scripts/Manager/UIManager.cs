@@ -357,53 +357,30 @@ public class UIManager : MonoBehaviour
 
     public void UpdateCellValue(int num)
     {
-        if (GameManager.Instance.selectedCellIdx != -1)
+        if (GameManager.Instance.selectedCellIdx == -1) return;
+
+        GameManager.Instance.SaveHistoryToStack();
+
+        Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
+        if (cell == null || cell.state == CellState.Given) return;
+
+        // num = 0이면 지우기, 아니면 입력
+        cell.val = num;
+        GameManager.Instance.cellValue[cell.row, cell.col] = num;
+        cell.state = num == 0 ? CellState.Empty : CellState.Normal;
+
+        TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
+        if (cellText != null)
         {
-            GameManager.Instance.SaveHistoryToStack();
-
-            Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
-            if (cell != null && cell.state != CellState.Given)
-            {
-                cell.val = num;
-                GameManager.Instance.cellValue[cell.row, cell.col] = cell.val;
-                cell.state = CellState.Normal;
-                TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
-                if (cellText != null)
-                {
-                    cellText.text = num.ToString();
-                    cellText.color = Color.blue;
-                }
-                InitCellBackgroundColor();
-                ChangeCellBackgroundColor(cell.idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
-                cell.isSelected = true;
-            }
-
-            if (GameManager.Instance.CheckSudoku()) OpenResultPanel();
+            cellText.text = num == 0 ? "" : num.ToString();
+            cellText.color = Color.blue;
         }
-    }
 
-    public void DeleteCellValue()
-    {
-        if (GameManager.Instance.selectedCellIdx != -1)
-        {
-            GameManager.Instance.SaveHistoryToStack();
+        InitCellBackgroundColor();
+        ChangeCellBackgroundColor(cell.idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
+        cell.isSelected = true;
 
-            Cell cell = cells[GameManager.Instance.selectedCellIdx].GetComponent<Cell>();
-            if (cell != null && cell.state == CellState.Normal)
-            {
-                cell.val = 0;
-                GameManager.Instance.cellValue[cell.row, cell.col] = cell.val;
-                cell.state = CellState.Empty;
-                TMP_Text cellText = cells[cell.idx].GetComponentInChildren<TMP_Text>();
-                if (cellText != null)
-                {
-                    cellText.text = "";
-                }
-                InitCellBackgroundColor();
-                ChangeCellBackgroundColor(cell.idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
-                cell.isSelected = true;
-            }
-        }
+        if (cell.val != 0 && GameManager.Instance.CheckSudoku()) OpenResultPanel();
     }
 
     public void UpdateBoardUI()
