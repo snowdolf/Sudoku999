@@ -39,6 +39,8 @@ public class UIManager : MonoBehaviour
     private GameObject resultPanelPrefab;
     private GameObject resultPanel;
 
+    public TimeText timeText;
+
     private void Awake()
     {
         if (Instance == null)
@@ -190,6 +192,8 @@ public class UIManager : MonoBehaviour
         resultPanel = Instantiate(resultPanelPrefab, canvas.transform);
 
         CloseResultPanel();
+
+        GameManager.Instance.StartTimer();
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
@@ -217,12 +221,14 @@ public class UIManager : MonoBehaviour
 
     public void OpenOptionPanel()
     {
+        GameManager.Instance.PauseTimer();
         OpenPanel(optionPanel);
         OpenPanel(optionBackgroundPanel);
     }
 
     public void OpenResultPanel()
     {
+        GameManager.Instance.PauseTimer();
         OpenPanel(resultPanel);
         OpenPanel(optionBackgroundPanel);
     }
@@ -252,6 +258,7 @@ public class UIManager : MonoBehaviour
 
     public void CloseOptionPanel()
     {
+        GameManager.Instance.ResumeTimer();
         ClosePanel(optionPanel);
         ClosePanel(optionBackgroundPanel);
     }

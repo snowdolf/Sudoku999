@@ -19,6 +19,10 @@ public class GameManager : MonoBehaviour
 
     private Stack<int[,]> historyStack = new Stack<int[,]>();
 
+    private float elapsedTime;
+    private bool isTimerRunning;
+    private int hours, minutes, seconds;
+
     private void Awake()
     {
         if (Instance == null)
@@ -35,6 +39,33 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SetIdx();
+    }
+
+    private void Update()
+    {
+        if (isTimerRunning)
+        {
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime >= 1f)
+            {
+                seconds++;
+                elapsedTime -= 1f;
+
+                if (seconds >= 60)
+                {
+                    minutes++;
+                    seconds -= 60;
+                }
+
+                if (minutes >= 60)
+                {
+                    hours++;
+                    minutes -= 60;
+                }
+
+                UIManager.Instance.timeText.SetTimeText();
+            }
+        }
     }
 
     private void SetIdx()
@@ -268,5 +299,27 @@ public class GameManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void StartTimer()
+    {
+        elapsedTime = 0f;
+        isTimerRunning = true;
+        hours = minutes = seconds = 0;
+    }
+
+    public void PauseTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    public void ResumeTimer()
+    {
+        isTimerRunning = true;
+    }
+
+    public string GetFormattedTime()
+    {
+        return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
     }
 }

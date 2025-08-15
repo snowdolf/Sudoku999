@@ -19,5 +19,7 @@ public class ResetButton : MonoBehaviour
     {
         GameManager.Instance.ResetHistory();
         UIManager.Instance.CloseOptionPanel();
+        GameManager.Instance.StartTimer();
+        UIManager.Instance.timeText.SetTimeText();
     }
 }
