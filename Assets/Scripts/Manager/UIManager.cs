@@ -312,13 +312,16 @@ public class UIManager : MonoBehaviour
             for (int i = 0; i < 9; i++)
             {
                 int targetIdx = GameManager.Instance.cellIdx[cell.row, i];
-                cells[targetIdx].GetComponent<Image>().color = cells[targetIdx].GetComponent<Image>().color == sameColor ? errorColor : nearColor;
+                Color targetColor = cells[targetIdx].GetComponent<Image>().color;
+                cells[targetIdx].GetComponent<Image>().color = (targetColor == sameColor || targetColor == errorColor) ? errorColor : nearColor;
 
                 targetIdx = GameManager.Instance.cellIdx[i, cell.col];
-                cells[targetIdx].GetComponent<Image>().color = cells[targetIdx].GetComponent<Image>().color == sameColor ? errorColor : nearColor;
+                targetColor = cells[targetIdx].GetComponent<Image>().color;
+                cells[targetIdx].GetComponent<Image>().color = (targetColor == sameColor || targetColor == errorColor) ? errorColor : nearColor;
 
                 targetIdx = GameManager.Instance.squareIdx[cell.square, i];
-                cells[targetIdx].GetComponent<Image>().color = cells[targetIdx].GetComponent<Image>().color == sameColor ? errorColor : nearColor;
+                targetColor = cells[targetIdx].GetComponent<Image>().color;
+                cells[targetIdx].GetComponent<Image>().color = (targetColor == sameColor || targetColor == errorColor) ? errorColor : nearColor;
             }
             
             cells[idx].GetComponent<Image>().color = selfColor;
