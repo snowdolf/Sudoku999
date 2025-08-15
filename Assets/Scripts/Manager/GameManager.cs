@@ -219,4 +219,54 @@ public class GameManager : MonoBehaviour
 
         UndoHistory();
     }
+
+    public bool CheckSudoku()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            HashSet<int> rowSet = new HashSet<int>();
+            for (int j = 0; j < 9; j++)
+            {
+                int val = cellValue[i,j];
+                if (val == 0 || !rowSet.Add(val))
+                {
+                    return false;
+                }
+            }
+        }
+
+        for (int i = 0; i < 9; i++)
+        {
+            HashSet<int> colSet = new HashSet<int>();
+            for (int j = 0; j < 9; j++)
+            {
+                int val = cellValue[j, i];
+                if (val == 0 || !colSet.Add(val))
+                {
+                    return false;
+                }
+            }
+        }
+
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                HashSet<int> boxSet = new HashSet<int>();
+                for (int dx = 0; dx < 3; dx++)
+                {
+                    for (int dy = 0; dy < 3; dy++)
+                    {
+                        int val = cellValue[x * 3 + dx, y * 3 + dy];
+                        if (val == 0 || !boxSet.Add(val))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 }

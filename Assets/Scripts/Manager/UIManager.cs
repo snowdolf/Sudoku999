@@ -36,6 +36,9 @@ public class UIManager : MonoBehaviour
     private GameObject optionBackgroundPanel;
     private GameObject optionPanel;
 
+    private GameObject resultPanelPrefab;
+    private GameObject resultPanel;
+
     private void Awake()
     {
         if (Instance == null)
@@ -181,6 +184,12 @@ public class UIManager : MonoBehaviour
         optionPanel = Instantiate(optionPanelPrefab, canvas.transform);
 
         CloseOptionPanel();
+
+        resultPanelPrefab = Resources.Load<GameObject>("Main/ResultPanel");
+
+        resultPanel = Instantiate(resultPanelPrefab, canvas.transform);
+
+        CloseResultPanel();
     }
 
     private void OpenPanel(GameObject panel, Animator animator = null, string trigger = null)
@@ -210,7 +219,13 @@ public class UIManager : MonoBehaviour
     {
         OpenPanel(optionPanel);
         OpenPanel(optionBackgroundPanel);
-    }    
+    }
+
+    public void OpenResultPanel()
+    {
+        OpenPanel(resultPanel);
+        OpenPanel(optionBackgroundPanel);
+    }
 
     private void ClosePanel(GameObject panel, Animator animator = null, string trigger = null)
     {
@@ -238,6 +253,12 @@ public class UIManager : MonoBehaviour
     public void CloseOptionPanel()
     {
         ClosePanel(optionPanel);
+        ClosePanel(optionBackgroundPanel);
+    }
+
+    public void CloseResultPanel()
+    {
+        ClosePanel(resultPanel);
         ClosePanel(optionBackgroundPanel);
     }
 
@@ -349,6 +370,8 @@ public class UIManager : MonoBehaviour
                 ChangeCellBackgroundColor(cell.idx, new Color(.85f, .85f, .85f), new Color(.85f, 1f, 1f), new Color(.5f, 1f, 1f), new Color(1f, .25f, .25f));
                 cell.isSelected = true;
             }
+
+            if (GameManager.Instance.CheckSudoku()) OpenResultPanel();
         }
     }
 
