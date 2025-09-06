@@ -1,8 +1,12 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
+using System;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -99,28 +103,64 @@ public class GameManager : MonoBehaviour
         Instance.difficulty = difficulty;
         UIManager.Instance.CloseDifficultyPanel();
 
-        SceneManager.LoadScene("MainScene");
+        SetRandomSudoku(() =>
+        {
+            SceneManager.LoadScene("MainScene");
+        });
     }
 
-    public void SetRandomSudoku()
+    private void SetRandomSudoku(Action onComplete)
     {
-        //SetRandomSolvedSudoku();
-        //RemoveNumbers();
-        LoadAndSetSudoku();
+#if UNITY_EDITOR
+        LoadAndSetFromEditor(onComplete);
+#else
+        StartCoroutine(LoadAndSetFromAndroid(onComplete));
+#endif
     }
 
-    private void LoadAndSetSudoku()
+#if UNITY_EDITOR
+    private void LoadAndSetFromEditor(Action onComplete)
     {
         string filePath = GetFilePath();
 
         if (!File.Exists(filePath))
         {
-            Debug.LogError($"Error: The file for difficulty {difficulty} was not found at {filePath}");
+            Debug.LogError($"Editor: Failed to load file for difficulty {difficulty}");
             return;
         }
 
-        string[] lines = File.ReadAllLines(filePath);
+        SetPuzzleFromLines(File.ReadAllLines(filePath));
+        onComplete?.Invoke();
+    }
+#else
+    private IEnumerator LoadAndSetFromAndroid(Action onComplete)
+    {
+        string uriPath = GetFilePath();
 
+        using (UnityWebRequest www = UnityWebRequest.Get(uriPath))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Android: Failed to load file for difficulty {difficulty}");
+                yield break;
+            }
+
+            SetPuzzleFromLines(www.downloadHandler.text.Split('\n'));
+            onComplete?.Invoke();
+        }
+    }
+#endif
+
+    private string GetFilePath()
+    {
+        string directory = Application.streamingAssetsPath;
+        return Path.Combine(directory, $"sudoku_difficulty_{difficulty}.csv");
+    }
+
+    private void SetPuzzleFromLines(string[] lines)
+    {
         if (lines.Length == 0)
         {
             Debug.LogError($"Error: No file found in the file for difficulty {difficulty}");
@@ -128,11 +168,8 @@ public class GameManager : MonoBehaviour
         }
 
         string randomLine = lines[Random.Range(0, lines.Length)];
-
         string[] data = randomLine.Split(',');
         string sudokuString = data[1];
-
-        //Debug.Log(sudokuString);
 
         for (int i = 0; i < 9; i++)
         {
@@ -141,115 +178,6 @@ public class GameManager : MonoBehaviour
                 char c = sudokuString[i * 9 + j];
                 cellValue[i, j] = c == '.' ? 0 : c - '0';
             }
-        }
-    }
-
-    private string GetFilePath()
-    {
-        string directory = Application.streamingAssetsPath;
-        return Path.Combine(directory, $"sudoku_difficulty_{difficulty}.csv");
-    }
-
-    private void SetRandomSolvedSudoku()
-    {
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                cellValue[i, j] = 0;
-            }
-        }
-
-        SolveSudoku(0, 0);
-    }
-
-    private bool SolveSudoku(int row, int col)
-    {
-        if (row == 9)
-        {
-            return true;
-        }
-        if (col == 9)
-        {
-            return SolveSudoku(row + 1, 0);
-        }
-
-        var randomNumbers = Enumerable.Range(1, 9).OrderBy(x => Random.value).ToList();
-
-        foreach (int num in randomNumbers)
-        {
-            if (IsValid(row, col, num))
-            {
-                cellValue[row, col] = num;
-                if (SolveSudoku(row, col + 1))
-                {
-                    return true;
-                }
-            }
-            cellValue[row, col] = 0;
-        }
-
-        return false;
-    }
-
-    private bool IsValid(int row, int col, int num)
-    {
-        for (int i = 0; i < 9; i++)
-        {
-            if (cellValue[row, i] == num || cellValue[i, col] == num)
-            {
-                return false;
-            }
-        }
-
-        int squareRow = row / 3 * 3;
-        int squareCol = col / 3 * 3;
-
-        for (int i = squareRow; i < squareRow + 3; i++)
-        {
-            for (int j = squareCol; j < squareCol + 3; j++)
-            {
-                if (cellValue[i, j] == num)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private void RemoveNumbers()
-    {
-        int numbersToRemove = 0;
-
-        switch (difficulty)
-        {
-            case 1:
-                numbersToRemove = 30;
-                break;
-            case 2:
-                numbersToRemove = 40;
-                break;
-            case 3:
-                numbersToRemove = 50;
-                break;
-            case 4:
-                numbersToRemove = 55;
-                break;
-            case 5:
-                numbersToRemove = 60;
-                break;
-        }
-
-        var randomNumbers = Enumerable.Range(0, 81).OrderBy(x => Random.value).ToList();
-
-        for (int i = 0; i < numbersToRemove; i++)
-        {
-            int row = randomNumbers[i] / 9;
-            int col = randomNumbers[i] % 9;
-
-            cellValue[row, col] = 0;
         }
     }
 

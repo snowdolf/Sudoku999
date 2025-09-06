@@ -156,7 +156,6 @@ public class UIManager : MonoBehaviour
 
         InitCellBackgroundColor();
 
-        GameManager.Instance.SetRandomSudoku();
         InitCellValue();
 
         inputBoardPrefab = Resources.Load<GameObject>("Main/InputBoard");
