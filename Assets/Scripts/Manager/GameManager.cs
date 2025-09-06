@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -103,8 +104,50 @@ public class GameManager : MonoBehaviour
 
     public void SetRandomSudoku()
     {
-        SetRandomSolvedSudoku();
-        RemoveNumbers();
+        //SetRandomSolvedSudoku();
+        //RemoveNumbers();
+        LoadAndSetSudoku();
+    }
+
+    private void LoadAndSetSudoku()
+    {
+        string filePath = GetFilePath();
+
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError($"Error: The file for difficulty {difficulty} was not found at {filePath}");
+            return;
+        }
+
+        string[] lines = File.ReadAllLines(filePath);
+
+        if (lines.Length == 0)
+        {
+            Debug.LogError($"Error: No file found in the file for difficulty {difficulty}");
+            return;
+        }
+
+        string randomLine = lines[Random.Range(0, lines.Length)];
+
+        string[] data = randomLine.Split(',');
+        string sudokuString = data[1];
+
+        //Debug.Log(sudokuString);
+
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                char c = sudokuString[i * 9 + j];
+                cellValue[i, j] = c == '.' ? 0 : c - '0';
+            }
+        }
+    }
+
+    private string GetFilePath()
+    {
+        string directory = Application.streamingAssetsPath;
+        return Path.Combine(directory, $"sudoku_difficulty_{difficulty}.csv");
     }
 
     private void SetRandomSolvedSudoku()
