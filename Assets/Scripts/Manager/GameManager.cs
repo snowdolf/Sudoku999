@@ -101,39 +101,27 @@ public class GameManager : MonoBehaviour
     public void SetDifficulty(int difficulty)
     {
         Instance.difficulty = difficulty;
-        UIManager.Instance.CloseDifficultyPanel();
 
         SetRandomSudoku(() =>
         {
-            SceneManager.LoadScene("MainScene");
+            StartCoroutine(LoadMainSceneAsync());
         });
+    }
+
+    private IEnumerator LoadMainSceneAsync()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MainScene");
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
     private void SetRandomSudoku(Action onComplete)
     {
-#if UNITY_EDITOR
-        LoadAndSetFromEditor(onComplete);
-#else
-        StartCoroutine(LoadAndSetFromAndroid(onComplete));
-#endif
+        StartCoroutine(LoadAndSetSudoku(onComplete));
     }
-
-#if UNITY_EDITOR
-    private void LoadAndSetFromEditor(Action onComplete)
-    {
-        string filePath = GetFilePath();
-
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"Editor: Failed to load file for difficulty {difficulty}");
-            return;
-        }
-
-        SetPuzzleFromLines(File.ReadAllLines(filePath));
-        onComplete?.Invoke();
-    }
-#else
-    private IEnumerator LoadAndSetFromAndroid(Action onComplete)
+    private IEnumerator LoadAndSetSudoku(Action onComplete)
     {
         string uriPath = GetFilePath();
 
@@ -143,15 +131,17 @@ public class GameManager : MonoBehaviour
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Android: Failed to load file for difficulty {difficulty}");
+                Debug.LogError($"Failed to load file for difficulty {difficulty}");
                 yield break;
             }
 
             SetPuzzleFromLines(www.downloadHandler.text.Split('\n'));
+
+            yield return null;
+
             onComplete?.Invoke();
         }
     }
-#endif
 
     private string GetFilePath()
     {

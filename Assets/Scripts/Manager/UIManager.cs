@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,10 +14,12 @@ public class UIManager : MonoBehaviour
     private GameObject difficultyBackgroundPanelPrefab;
     private GameObject difficultyPanelPrefab;
     private GameObject difficultyButtonPrefab;
+    private GameObject loadingPanelPrefab;
 
     private GameObject difficultyBackgroundPanel;
     private GameObject difficultyPanel;
     private Animator difficultyPanelAnimator;
+    private GameObject loadingPanel;
 
     private GameObject boardPrefab;
     private GameObject squarePrefab;
@@ -74,10 +77,12 @@ public class UIManager : MonoBehaviour
         difficultyBackgroundPanelPrefab = Resources.Load<GameObject>("Lobby/DifficultyBackgroundPanel");
         difficultyPanelPrefab = Resources.Load<GameObject>("Lobby/DifficultyPanel");
         difficultyButtonPrefab = Resources.Load<GameObject>("Lobby/DifficultyButton");
+        loadingPanelPrefab = Resources.Load<GameObject>("Lobby/LoadingPanel");
 
         difficultyBackgroundPanel = Instantiate(difficultyBackgroundPanelPrefab, canvas.transform);
         difficultyPanel = Instantiate(difficultyPanelPrefab, canvas.transform);
         difficultyPanelAnimator = difficultyPanel.GetComponent<Animator>();
+        loadingPanel = Instantiate(loadingPanelPrefab, canvas.transform);
 
         EventTrigger trigger = difficultyBackgroundPanel.GetComponent<EventTrigger>();
         if (trigger != null)
@@ -103,11 +108,15 @@ public class UIManager : MonoBehaviour
             if (button != null)
             {
                 int difficulty = i;
-                button.onClick.AddListener(() => GameManager.Instance.SetDifficulty(difficulty));
+                button.onClick.AddListener(() =>
+                {
+                    StartCoroutine(OnDifficultyButtonClick(difficulty));
+                });
             }
         }
         
         CloseDifficultyPanel();
+        CloseLoadingPanel();
     }
 
     private void ConnectMainSceneUI()
@@ -213,6 +222,21 @@ public class UIManager : MonoBehaviour
         OpenPanel(difficultyBackgroundPanel);
     }
 
+    public void OpenLoadingPanel()
+    {
+        OpenPanel(loadingPanel);
+    }
+
+    private IEnumerator OnDifficultyButtonClick(int difficulty)
+    {
+        CloseDifficultyPanel();
+        OpenLoadingPanel();
+
+        yield return null; // Wait for one frame to ensure the loading panel is visible
+
+        GameManager.Instance.SetDifficulty(difficulty);
+    }
+
     public void OpenInputPanel()
     {
         OpenPanel(inputBoard);
@@ -248,6 +272,11 @@ public class UIManager : MonoBehaviour
     {
         ClosePanel(difficultyPanel);
         ClosePanel(difficultyBackgroundPanel);
+    }
+
+    public void CloseLoadingPanel()
+    {
+        ClosePanel(loadingPanel);
     }
 
     public void CloseInputPanel()
