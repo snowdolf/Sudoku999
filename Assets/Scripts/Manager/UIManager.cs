@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
     private GameObject inputCellPrefab;
 
     private GameObject inputBoard;
+    public GameObject[] inputCells = new GameObject[9];
 
     private GameObject optionBackgroundPanelPrefab;
     private GameObject optionPanelPrefab;
@@ -173,15 +174,15 @@ public class UIManager : MonoBehaviour
         Button button = GameObject.Find("InputButton").GetComponent<Button>();
         inputBoard = Instantiate(inputBoardPrefab, button.transform);
 
-        for (int i = 1; i <= 9; i++)
+        for (int i = 0; i < 9; i++)
         {
-            GameObject inputCell = Instantiate(inputCellPrefab, inputBoard.transform);
-            inputCell.name = "InputCell" + i;
+            inputCells[i] = Instantiate(inputCellPrefab, inputBoard.transform);
+            inputCells[i].name = "InputCell" + (i + 1);
 
-            TMP_Text cellText = inputCell.GetComponentInChildren<TMP_Text>();
+            TMP_Text cellText = inputCells[i].GetComponentInChildren<TMP_Text>();
             if (cellText != null)
             {
-                cellText.text = i.ToString();
+                cellText.text = (i + 1).ToString();
             }
         }
 
@@ -433,5 +434,27 @@ public class UIManager : MonoBehaviour
         }
 
         InitCellBackgroundColor();
+    }
+
+    public void ChangeInputCellBackgroundColor()
+    {
+        for (int i = 0; i < inputCells.Length; i++)
+        {
+            inputCells[i].GetComponent<Image>().color = Color.white;
+
+            int cnt = 0;
+            for (int j = 0; j < cells.Length; j++)
+            {
+                Cell cell = cells[j].GetComponent<Cell>();
+                if (cell != null && cell.val == i + 1)
+                {
+                    cnt++;
+                }
+            }
+            if (cnt >= 9)
+            {
+                inputCells[i].GetComponent<Image>().color = Color.gray;
+            }
+        }
     }
 }

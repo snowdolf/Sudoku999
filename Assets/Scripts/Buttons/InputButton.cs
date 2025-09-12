@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class InputButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public void OnPointerDown(PointerEventData eventData)
     {
+        UIManager.Instance.ChangeInputCellBackgroundColor();
         UIManager.Instance.OpenInputPanel();
     }
 
