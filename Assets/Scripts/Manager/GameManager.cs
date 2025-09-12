@@ -160,6 +160,7 @@ public class GameManager : MonoBehaviour
         string randomLine = lines[Random.Range(0, lines.Length)];
         string[] data = randomLine.Split(',');
         string sudokuString = data[1];
+        string solutionString = data[2];
 
         for (int i = 0; i < 9; i++)
         {
@@ -168,6 +169,25 @@ public class GameManager : MonoBehaviour
                 char c = sudokuString[i * 9 + j];
                 cellValue[i, j] = c == '.' ? 0 : c - '0';
             }
+        }
+
+        int cellsToFill = 15 - 3 * difficulty;
+        List<int> emptyCells = new List<int>();
+
+        for (int i = 0; i < 81; i++)
+        {
+            if (cellValue[i / 9, i % 9] == 0)
+            {
+                emptyCells.Add(i);
+            }
+        }
+
+        for (int i = 0; i < cellsToFill && emptyCells.Count > 0; i++)
+        {
+            int randomIndex = Random.Range(0, emptyCells.Count);
+            int cellIdx = emptyCells[randomIndex];
+            emptyCells.RemoveAt(randomIndex);
+            cellValue[cellIdx / 9, cellIdx % 9] = solutionString[cellIdx] - '0';
         }
     }
 
